@@ -6,7 +6,7 @@ import "./Interfaces/IUniswapV2Pair.sol";
 
 contract SushiswapLiquidityRouter {
 
-  event Deposit(address sender, uint amountA, uint amountB, uint liquidity);
+  event Deposit(address sender, uint amountA, uint amountB);
   event Withdraw(address sender, uint amountA, uint amountB);
 
   IUniswapV2Router02 immutable router;
@@ -31,8 +31,6 @@ contract SushiswapLiquidityRouter {
     usdt = _usdt;
   }
 
-  //https://github.com/sushiswap/sushiswap/blob/master/protocols/sushiswap/contracts/UniswapV2Router02.sol
-
   //usdc/usdt
   function deposit(
     uint amountADesired,
@@ -49,6 +47,9 @@ contract SushiswapLiquidityRouter {
     // );
     // require(success, "Not success");
     // (uint amountA, uint amountB, uint liquidity) = abi.decode(result, (uint,uint,uint));
+    // emit Deposit(msg.sender, amountA, amountB);
+
+
     // (uint amountA, uint amountB, uint liquidity) = router.addLiquidity(
     //   usdc,
     //   usdt,
@@ -61,8 +62,7 @@ contract SushiswapLiquidityRouter {
     // );
     uint256 amountA = amountADesired;
     uint256 amountB = amountBDesired;
-    uint256 liquidity = 1;
-    emit Deposit(msg.sender, amountA, amountB, liquidity);
+    emit Deposit(msg.sender, amountA, amountB);
   }
 
   function withdraw(
@@ -70,7 +70,18 @@ contract SushiswapLiquidityRouter {
     uint amountAMin,
     uint amountBMin
   ) public {
-    // uint256 deadline = block.timestamp + 30 minutes;
+    uint256 deadline = block.timestamp + 30 minutes;
+    // (bool success, bytes memory result) = address(router).delegatecall(
+    //   abi.encodeWithSignature(
+    //     "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
+    //     usdc, usdt, liquidity, amountAMin, amountBMin, msg.sender, deadline
+    //   )
+    // );
+    // require(success, "Not success");
+    // (uint amountA, uint amountB) = abi.decode(result, (uint,uint));
+    // emit Withdraw(msg.sender, amountA, amountB);
+
+
     // (uint amountA, uint amountB) = router.removeLiquidity(
     //     usdc,
     //     usdt,
@@ -79,7 +90,7 @@ contract SushiswapLiquidityRouter {
     //     amountBMin,
     //     msg.sender,
     //     deadline
-    // );s
+    // );
     uint256 amountA = amountAMin;
     uint256 amountB = amountBMin;
     emit Withdraw(msg.sender, amountA, amountB);
