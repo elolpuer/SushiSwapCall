@@ -56,7 +56,7 @@ contract SushiswapLiquidityRouter {
       amountBDesired,
       amountAMin,
       amountBMin,
-      sender,
+      address(this),
       deadline
     );
     userBalance[sender] += liquidity;
@@ -70,8 +70,8 @@ contract SushiswapLiquidityRouter {
     uint amountBMin
   ) public {
     address sender = msg.sender;
+    require(userBalance[sender] >= liquidity, "Not enough liquidity");
     uint256 deadline = block.timestamp + 30 minutes;
-    pair.transferFrom(sender, address(this), liquidity);
     pair.approve(address(router), liquidity);
     (uint amountA, uint amountB) = router.removeLiquidity(
         address(usdc),

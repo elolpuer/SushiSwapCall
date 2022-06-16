@@ -86,18 +86,6 @@ async function main() {
     await lr.totalDeposits()
   )
 
-  console.log(
-    await lr.totalDeposits() - await lr.userBalance(signer.address)
-  )
-
-  await pair.approve(lr.address, ethers.utils.parseEther("100"))
-    .then(async(tx) => {
-      await tx.wait()
-      console.log(
-        "LP Allowance:", (await pair.allowance(signer.address, lr.address))
-      )
-    })
-
   await lr.withdraw(
     (await lr.userBalance(signer.address)).toString(),
     "10000000000000000000000000",
