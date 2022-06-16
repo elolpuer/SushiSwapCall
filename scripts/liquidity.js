@@ -9,12 +9,13 @@ async function main() {
   const usdcAddress = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
   const usdtAddress = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
   const pairAddress = '0x8edA82BCC2CCb5B82FA8adcAf9d843247b3C1dA6'
+  const routerAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506'
 
   const signer = await ethers.getSigner()
   const LiquidityRouter = await ethers.getContractFactory("SushiswapLiquidityRouter")
   console.log("Deploying LiquidityRouter")
   const lr = await LiquidityRouter.deploy(
-    '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506', //router
+    routerAddress, //router
     pairAddress, //pair
     usdcAddress,  //usdc
     usdtAddress, //usdt

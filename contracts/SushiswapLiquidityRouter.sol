@@ -71,6 +71,8 @@ contract SushiswapLiquidityRouter {
   ) public {
     address sender = msg.sender;
     uint256 deadline = block.timestamp + 30 minutes;
+    _pair.transferFrom(sender, address(this), liquidity);
+    _pair.approve(address(router), liquidity);
     (uint amountA, uint amountB) = router.removeLiquidity(
         address(usdc),
         address(usdt),
@@ -80,8 +82,8 @@ contract SushiswapLiquidityRouter {
         sender,
         deadline
     );
-    usdc.transferFrom(address(this), sender, amountA);
-    usdt.transferFrom(address(this), sender, amountB);
+    // usdc.transferFrom(address(this), sender, amountA);
+    // usdt.transferFrom(address(this), sender, amountB);
     userBalance[sender] -= liquidity;
     totalDeposits -= liquidity;
     emit Withdraw(sender, amountA, amountB);
