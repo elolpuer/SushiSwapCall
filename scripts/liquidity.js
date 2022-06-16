@@ -18,10 +18,10 @@ async function main() {
   console.log("Signer:", signer.address)
   console.log("Deploying LiquidityRouter")
   const lr = await LiquidityRouter.deploy(
-    routerAddress, //router
-    pairAddress, //pair
-    usdcAddress,  //usdc
-    usdtAddress, //usdt
+    routerAddress,  //router
+    pairAddress,    //pair
+    usdcAddress,    //usdc
+    usdtAddress,    //usdt
   )
   const usdc = new ethers.Contract(usdcAddress, erc20Abi, signer)
   const usdt = new ethers.Contract(usdtAddress, erc20Abi, signer)
@@ -31,16 +31,19 @@ async function main() {
 
   console.log("Router deployed on address: ", lr.address)
 
+  //смотрим баланс LP токенов пользователя до депозита
   console.log(
     "Balance LP before",
     await lr.userBalance(signer.address)
   )
 
+  //смотрим общее количество LP токенов прошедших через контракт до депозита
   console.log(
     "Total Supply",
     await lr.totalDeposits()
   )
 
+  //даем разрешение на пользование токенами нашим контрактом
   console.log("Approve...")
   await usdc.approve(lr.address, "1000000000000000000000000000")
     .then(async(tx) => {
@@ -56,58 +59,49 @@ async function main() {
         "UNI Allowance:", (await usdt.allowance(signer.address, lr.address))
       )
     })
-  // console.log("Transfer From")
-  // await usdc.transferFrom(signer.address, lr.address, 1)
-  // await usdt.transferFrom(signer.address, lr.address, 1)
 
   console.log("Deposit...")
 
+  //добавляем ликвидность
   await lr.deposit(
     "100000000000000000000000000",  //amountADesired
     "440874309984", //amountBDesired
     "99500000000000000000000000",  //amountAMin
     "438669938434"   //amountBMin
   ).then( async (tx) => {
-      const events = (await tx.wait()).events
-      console.log(events[events.length - 1])
-      // const BurnEvent = events[events.length - 1]
-      // const sender = BurnEvent.args.sender
-      // const amount = BurnEvent.args.amount
-      // await wqdt.mint(sender, amount)
-      // console.log("QDT after bridge", await qdt.balanceOf(signers[0].address))
-      // console.log("WrappedQDT after bridge", await wqdt.balanceOf(signers[0].address))
-    })
+      await tx.wait()
+      console.log("Done")
+  })
 
+  //смотрим баланс LP токенов пользователя после депозита
   console.log(
     "Balance LP after deposit",
     await lr.userBalance(signer.address)
   )
 
+  //смотрим общее количество LP токенов прошедших через контракт после депозита
   console.log(
     "Total Supply after deposit",
     await lr.totalDeposits()
   )
 
+  ////удаляем ликвидность и забираем токены
   await lr.withdraw(
     (await lr.userBalance(signer.address)).toString(),
     "10000000000000000000000000",
     "43866993843"
   ).then( async (tx) => {
-      const events = (await tx.wait()).events
-      console.log(events[events.length - 1])
-      // const BurnEvent = events[events.length - 1]
-      // const sender = BurnEvent.args.sender
-      // const amount = BurnEvent.args.amount
-      // await wqdt.mint(sender, amount)
-      // console.log("QDT after bridge", await qdt.balanceOf(signers[0].address))
-      // console.log("WrappedQDT after bridge", await wqdt.balanceOf(signers[0].address))
-    })
+      await tx.wait()
+      console.log("Done")
+  })
 
+  //смотрим баланс LP токенов пользователя после удаления ликвидности
   console.log(
     "Balance LP after withdraw",
     await lr.userBalance(signer.address)
   )
 
+  //смотрим общее количество LP токенов прошедших через контракт после удаления ликвидности
   console.log(
     "Total Supply after withdraw",
     await lr.totalDeposits()

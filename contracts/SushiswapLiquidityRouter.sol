@@ -44,11 +44,15 @@ contract SushiswapLiquidityRouter {
     uint amountBMin
   ) public {
     address sender = msg.sender;
+    //deadline ставим в значение 30 минут
     uint256 deadline = block.timestamp + 30 minutes;
+    //отправляем токены на адрес нашего контракта
     usdc.transferFrom(sender, address(this), amountADesired);
     usdt.transferFrom(sender, address(this), amountBDesired);
+    //даем разрешение на использование токенов контрактом роутера свапа
     usdc.approve(address(router), amountADesired);
     usdt.approve(address(router), amountBDesired);
+    //добавляем ликвидность
     (uint amountA, uint amountB, uint liquidity) = router.addLiquidity(
       address(usdc),
       address(usdt),
@@ -56,9 +60,12 @@ contract SushiswapLiquidityRouter {
       amountBDesired,
       amountAMin,
       amountBMin,
-      address(this),
+      address(this), // ставим адрес получателя наш контракт потому что
+                     // мы не хотим чтобы пользователь мог забрать ликвидность напрямую
+                     // иначе мы не сможем отследить это
       deadline
     );
+    //добавляем LP к пользователю и в общий баланс
     userBalance[sender] += liquidity;
     totalDeposits += liquidity;
     emit Deposit(sender, amountA, amountB);
@@ -70,20 +77,23 @@ contract SushiswapLiquidityRouter {
     uint amountBMin
   ) public {
     address sender = msg.sender;
+    //проверяем достаточно ли LP токенов у пользователя
     require(userBalance[sender] >= liquidity, "Not enough liquidity");
+    //deadline ставим в значение 30 минут
     uint256 deadline = block.timestamp + 30 minutes;
+    //даем разрешение на использование токенов LP контракту роутера
     pair.approve(address(router), liquidity);
+    //удаляем ликвидность и забираем токены
     (uint amountA, uint amountB) = router.removeLiquidity(
         address(usdc),
         address(usdt),
         liquidity,
         amountAMin,
         amountBMin,
-        address(this),
+        sender,
         deadline
     );
-    usdc.transfer(sender, amountA);
-    usdt.transfer(sender, amountB);
+    //вычитаем LP у пользователя и в общего баланса
     userBalance[sender] -= liquidity;
     totalDeposits -= liquidity;
     emit Withdraw(sender, amountA, amountB);
