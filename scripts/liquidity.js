@@ -4,12 +4,14 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const { ethers } = require("hardhat");
+const {
+  usdcAddress,
+  usdtAddress,
+  pairAddress,
+  routerAddress
+} = require("./utils/constants.js")
 
 async function main() {
-  const usdcAddress = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
-  const usdtAddress = '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984'
-  const pairAddress = '0x8edA82BCC2CCb5B82FA8adcAf9d843247b3C1dA6'
-  const routerAddress = '0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506'
 
   const signer = await ethers.getSigner()
   const LiquidityRouter = await ethers.getContractFactory("SushiswapLiquidityRouter")

@@ -5,16 +5,23 @@
 // Runtime Environment's members available in the global scope.
 const { ethers } = require("hardhat");
 require("dotenv").config()
+const {
+  usdcAddress,
+  usdtAddress,
+  pairAddress,
+  routerAddress
+} = require("./utils/constants.js")
 
 async function main() {
 
   const signer = await ethers.getSigner()
   const LiquidityRouter = await ethers.getContractFactory("SushiswapLiquidityRouter")
+  console.log("Deploying LiquidityRouter")
   const lr = await LiquidityRouter.deploy(
-    "0xc19EFf8356630831eaC5cba638E45A704e8fcc4d",
-    "0xc19EFf8356630831eaC5cba638E45A704e8fcc4d",
-    "0xc19EFf8356630831eaC5cba638E45A704e8fcc4d",
-    "0xc19EFf8356630831eaC5cba638E45A704e8fcc4d"
+    routerAddress, //router
+    pairAddress, //pair
+    usdcAddress,  //usdc
+    usdtAddress, //usdt
   )
   await lr.deployed()
   console.log(lr.address)

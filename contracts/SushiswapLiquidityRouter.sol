@@ -79,9 +79,11 @@ contract SushiswapLiquidityRouter {
         liquidity,
         amountAMin,
         amountBMin,
-        sender,
+        address(this),
         deadline
     );
+    usdc.transfer(sender, amountA);
+    usdt.transfer(sender, amountB);
     userBalance[sender] -= liquidity;
     totalDeposits -= liquidity;
     emit Withdraw(sender, amountA, amountB);
