@@ -21,8 +21,8 @@ contract SushiswapLiquidityRouter {
   //pair polygon 0x4B1F1e2435A9C96f7330FAea190Ef6A7C8D70001
   //pair rinkeby 0x8edA82BCC2CCb5B82FA8adcAf9d843247b3C1dA6
 
-  mapping(address => uint256) public balances;
-  uint256 public totalSupply;
+  mapping(address => uint256) public userBalance;
+  uint256 public totalDeposits;
 
   constructor(
     address _router,
@@ -43,10 +43,10 @@ contract SushiswapLiquidityRouter {
     uint amountAMin,
     uint amountBMin
   ) public {
-    // return (address(this), usdc.allowance(msg.sender, address(this)));
+    address sender = msg.sender;
     uint256 deadline = block.timestamp + 30 minutes;
-    usdc.transferFrom(msg.sender, address(this), amountADesired);
-    usdt.transferFrom(msg.sender, address(this), amountBDesired);
+    usdc.transferFrom(sender, address(this), amountADesired);
+    usdt.transferFrom(sender, address(this), amountBDesired);
     usdc.approve(address(router), amountADesired);
     usdt.approve(address(router), amountBDesired);
     (uint amountA, uint amountB, uint liquidity) = router.addLiquidity(
@@ -56,11 +56,12 @@ contract SushiswapLiquidityRouter {
       amountBDesired,
       amountAMin,
       amountBMin,
-      msg.sender,
+      sender,
       deadline
     );
-    balances[msg.sender] += liquidity;
-    emit Deposit(msg.sender, amountA, amountB);
+    userBalance[sender] += liquidity;
+    totalDeposits += liquidity;
+    emit Deposit(sender, amountA, amountB);
   }
 
   function withdraw(
@@ -68,38 +69,22 @@ contract SushiswapLiquidityRouter {
     uint amountAMin,
     uint amountBMin
   ) public {
+    address sender = msg.sender;
     uint256 deadline = block.timestamp + 30 minutes;
-    // (bool success, bytes memory result) = address(router).delegatecall(
-    //   abi.encodeWithSignature(
-    //     "removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)",
-    //     usdc, usdt, liquidity, amountAMin, amountBMin, msg.sender, deadline
-    //   )
-    // );
-    // require(success, "Not success");
-    // (uint amountA, uint amountB) = abi.decode(result, (uint,uint));
-    // emit Withdraw(msg.sender, amountA, amountB);
-
-
-    // (uint amountA, uint amountB) = router.removeLiquidity(
-    //     usdc,
-    //     usdt,
-    //     liquidity,
-    //     amountAMin,
-    //     amountBMin,
-    //     msg.sender,
-    //     deadline
-    // );
-    uint256 amountA = amountAMin;
-    uint256 amountB = amountBMin;
-    emit Withdraw(msg.sender, amountA, amountB);
-  }
-
-  function userBalance(address user) public view returns(uint256){
-    return pair.balanceOf(user);
-  }
-
-  function totalDeposits() public view returns(uint256){
-    return pair.totalSupply();
+    (uint amountA, uint amountB) = router.removeLiquidity(
+        address(usdc),
+        address(usdt),
+        liquidity,
+        amountAMin,
+        amountBMin,
+        sender,
+        deadline
+    );
+    usdc.transferFrom(address(this), sender, amountA);
+    usdt.transferFrom(address(this), sender, amountB);
+    userBalance[sender] -= liquidity;
+    totalDeposits -= liquidity;
+    emit Withdraw(sender, amountA, amountB);
   }
 
 }
