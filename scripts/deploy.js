@@ -18,9 +18,6 @@ async function main() {
   )
   await lr.deployed()
   console.log(lr.address)
-  // const url = "https://eth-rinkeby.alchemyapi.io/v2/" + [process.env.API_KEY];
-  //
-  // const provider = new ethers.providers.WebSocketProvider(url)
 
 }
 
