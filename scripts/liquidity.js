@@ -13,6 +13,7 @@ async function main() {
 
   const signer = await ethers.getSigner()
   const LiquidityRouter = await ethers.getContractFactory("SushiswapLiquidityRouter")
+  console.log("Signer:", signer.address)
   console.log("Deploying LiquidityRouter")
   const lr = await LiquidityRouter.deploy(
     routerAddress, //router
@@ -99,8 +100,8 @@ async function main() {
 
   await lr.withdraw(
     (await lr.userBalance(signer.address)).toString(),
-    "100000000000000000000000000",
-    "438669938434"
+    "10000000000000000000000000",
+    "43866993843"
   ).then( async (tx) => {
       const events = (await tx.wait()).events
       console.log(events[events.length - 1])
