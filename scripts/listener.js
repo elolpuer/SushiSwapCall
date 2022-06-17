@@ -12,7 +12,7 @@ const {
 } = require("./utils/workWithFile.js")
 
 
-const contractAddress = read();
+const contractAddress = '0xA85E9D29Acd177EC4aD6393806075870854Df79b';
 
 // Create the log options object.
 const depositEvents = {
@@ -26,7 +26,7 @@ const withdrawEvents = {
 }
 
 const web3 = createAlchemyWeb3(
-    `wss://eth-rinkeby.alchemyapi.io/v2/${[process.env.API_KEY]}`
+    `wss://polygon-mainnet.g.alchemy.com/v2/${[process.env.API_KEY]}`
 );
 
 const writeDeposit = async (txn) => {
