@@ -12,7 +12,7 @@ const {
 } = require("./utils/workWithFile.js")
 
 
-const contractAddress = '0xA85E9D29Acd177EC4aD6393806075870854Df79b';
+const contractAddress = '0xcC74FD1D507fd1D718CFA5935EDb826Ce0A65338';
 
 // Create the log options object.
 const depositEvents = {

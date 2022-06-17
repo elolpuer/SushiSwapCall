@@ -30,7 +30,7 @@ async function main() {
   const usdt = new ethers.Contract(usdtAddress, erc20Abi, signer)
   const pair = new ethers.Contract(pairAddress, pairAbi, signer)
   // await lr.deployed()
-  const lr = await LiquidityRouter.attach('0xA85E9D29Acd177EC4aD6393806075870854Df79b')
+  const lr = await LiquidityRouter.attach('0xcC74FD1D507fd1D718CFA5935EDb826Ce0A65338')
 
   console.log("Router on address: ", lr.address)
 
