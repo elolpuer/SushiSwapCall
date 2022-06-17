@@ -19,18 +19,18 @@ async function main() {
   const signer = await ethers.getSigner()
   const LiquidityRouter = await ethers.getContractFactory("SushiswapLiquidityRouter")
   console.log("Signer:", signer.address)
-  console.log("Deploying LiquidityRouter")
-  const lr = await LiquidityRouter.deploy(
-    routerAddress,  //router
-    pairAddress,    //pair
-    usdcAddress,    //usdc
-    usdtAddress,    //usdt
-  )
+  // console.log("Deploying LiquidityRouter")
+  // const lr = await LiquidityRouter.deploy(
+  //   routerAddress,  //router
+  //   pairAddress,    //pair
+  //   usdcAddress,    //usdc
+  //   usdtAddress,    //usdt
+  // )
   const usdc = new ethers.Contract(usdcAddress, erc20Abi, signer)
   const usdt = new ethers.Contract(usdtAddress, erc20Abi, signer)
   const pair = new ethers.Contract(pairAddress, pairAbi, signer)
-  await lr.deployed()
-  // const lr = await LiquidityRouter.attach(read())
+  // await lr.deployed()
+  const lr = await LiquidityRouter.attach('0xA85E9D29Acd177EC4aD6393806075870854Df79b')
 
   console.log("Router on address: ", lr.address)
 
