@@ -11,6 +11,9 @@ const {
   pairAddress,
   routerAddress
 } = require("./utils/constants.js")
+const {
+  write
+} = require("./utils/workWithFile.js")
 
 async function main() {
 
@@ -24,8 +27,8 @@ async function main() {
     usdtAddress, //usdt
   )
   await lr.deployed()
-  console.log(lr.address)
-
+  console.log("Deployed on address: ", lr.address)
+  await write(lr.address)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

@@ -7,8 +7,12 @@ const {
   depositTopic,
   withdrawTopic
 } = require("./utils/constants.js")
+const {
+  read
+} = require("./utils/workWithFile.js")
 
-const contractAddress = "0x3E3696C1FD4e6bfCd3c4293A2eD0C5075EAD2c0a";
+
+const contractAddress = read();
 
 // Create the log options object.
 const depositEvents = {
@@ -54,7 +58,7 @@ const writeWithdraw = async (txn) => {
     `
   )
 }
-
+console.log("Start listen address: ", contractAddress)
 // Open the websocket and listen for events
 web3.eth.subscribe("logs", depositEvents).on("data", writeDeposit);
 web3.eth.subscribe("logs", withdrawEvents).on("data", writeWithdraw);

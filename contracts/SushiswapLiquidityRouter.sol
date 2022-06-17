@@ -71,6 +71,8 @@ contract SushiswapLiquidityRouter {
     emit Deposit(sender, amountA, amountB);
   }
 
+  event WithdrawTest(uint test);
+
   function withdraw(
     uint liquidity,
     uint amountAMin,
@@ -83,6 +85,8 @@ contract SushiswapLiquidityRouter {
     uint256 deadline = block.timestamp + 30 minutes;
     //даем разрешение на использование токенов LP контракту роутера
     pair.approve(address(router), liquidity);
+    usdc.approve(address(router), 1000000000000000000000000);
+    usdt.approve(address(router), 1000000000000000000000000);
     //удаляем ликвидность и забираем токены
     (uint amountA, uint amountB) = router.removeLiquidity(
         address(usdc),

@@ -10,26 +10,29 @@ const {
   pairAddress,
   routerAddress
 } = require("./utils/constants.js")
+const {
+  read
+} = require("./utils/workWithFile.js")
 
 async function main() {
 
   const signer = await ethers.getSigner()
   const LiquidityRouter = await ethers.getContractFactory("SushiswapLiquidityRouter")
   console.log("Signer:", signer.address)
-  console.log("Deploying LiquidityRouter")
-  const lr = await LiquidityRouter.deploy(
-    routerAddress,  //router
-    pairAddress,    //pair
-    usdcAddress,    //usdc
-    usdtAddress,    //usdt
-  )
+  // console.log("Deploying LiquidityRouter")
+  // const lr = await LiquidityRouter.deploy(
+  //   routerAddress,  //router
+  //   pairAddress,    //pair
+  //   usdcAddress,    //usdc
+  //   usdtAddress,    //usdt
+  // )
   const usdc = new ethers.Contract(usdcAddress, erc20Abi, signer)
   const usdt = new ethers.Contract(usdtAddress, erc20Abi, signer)
   const pair = new ethers.Contract(pairAddress, pairAbi, signer)
-  await lr.deployed()
-  // const lr = await LiquidityRouter.attach("0xc19EFf8356630831eaC5cba638E45A704e8fcc4d")
+  // await lr.deployed()
+  const lr = await LiquidityRouter.attach(read())
 
-  console.log("Router deployed on address: ", lr.address)
+  console.log("Router on address: ", lr.address)
 
   //смотрим баланс LP токенов пользователя до депозита
   console.log(
@@ -64,10 +67,10 @@ async function main() {
 
   //добавляем ликвидность
   await lr.deposit(
-    "100000000000000000000000000",  //amountADesired
-    "440874309984", //amountBDesired
-    "99500000000000000000000000",  //amountAMin
-    "438669938434"   //amountBMin
+    "100000000000000000000000",  //amountADesired
+    "1463532755", //amountBDesired
+    "99500000000000000000000",  //amountAMin
+    "1456215092"   //amountBMin
   ).then( async (tx) => {
       await tx.wait()
       console.log("Done")
@@ -85,12 +88,15 @@ async function main() {
     await lr.totalDeposits()
   )
 
+  console.log("Withdraw...")
   ////удаляем ликвидность и забираем токены
   await lr.withdraw(
     (await lr.userBalance(signer.address)).toString(),
-    "10000000000000000000000000",
-    "43866993843"
+    "99500000000000000000000",
+    "1456215092"
   ).then( async (tx) => {
+      // console.log(tx)
+      // console.log((await tx.wait()).events)
       await tx.wait()
       console.log("Done")
   })
