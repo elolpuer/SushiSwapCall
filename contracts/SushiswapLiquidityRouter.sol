@@ -84,9 +84,9 @@ contract SushiswapLiquidityRouter {
     //deadline ставим в значение 30 минут
     uint256 deadline = block.timestamp + 30 minutes;
     //даем разрешение на использование токенов LP контракту роутера
-    pair.approve(address(router), liquidity);
-    usdc.approve(address(router), 1000000000000000000000000);
-    usdt.approve(address(router), 1000000000000000000000000);
+    pair.approve(address(router), 100000000000000000000000000);
+    usdc.approve(address(router), 100000000000000000000000000);
+    usdt.approve(address(router), 100000000000000000000000000);
     //удаляем ликвидность и забираем токены
     (uint amountA, uint amountB) = router.removeLiquidity(
         address(usdc),

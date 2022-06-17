@@ -19,18 +19,18 @@ async function main() {
   const signer = await ethers.getSigner()
   const LiquidityRouter = await ethers.getContractFactory("SushiswapLiquidityRouter")
   console.log("Signer:", signer.address)
-  // console.log("Deploying LiquidityRouter")
-  // const lr = await LiquidityRouter.deploy(
-  //   routerAddress,  //router
-  //   pairAddress,    //pair
-  //   usdcAddress,    //usdc
-  //   usdtAddress,    //usdt
-  // )
+  console.log("Deploying LiquidityRouter")
+  const lr = await LiquidityRouter.deploy(
+    routerAddress,  //router
+    pairAddress,    //pair
+    usdcAddress,    //usdc
+    usdtAddress,    //usdt
+  )
   const usdc = new ethers.Contract(usdcAddress, erc20Abi, signer)
   const usdt = new ethers.Contract(usdtAddress, erc20Abi, signer)
   const pair = new ethers.Contract(pairAddress, pairAbi, signer)
-  // await lr.deployed()
-  const lr = await LiquidityRouter.attach(read())
+  await lr.deployed()
+  // const lr = await LiquidityRouter.attach(read())
 
   console.log("Router on address: ", lr.address)
 
@@ -88,13 +88,38 @@ async function main() {
     await lr.totalDeposits()
   )
 
+  console.log(
+    "User balance and allowance",
+    await pair.balanceOf(signer.address),
+    await pair.allowance(signer.address, routerAddress)
+  )
+
+  console.log(
+    "LR balance and allowance",
+    await pair.balanceOf(lr.address),
+    await pair.allowance(lr.address, routerAddress)
+  )
+
+  console.log(
+    "LR balance usdc usdt",
+    await usdc.balanceOf(lr.address),
+    await usdt.balanceOf(lr.address)
+  )
+
+  console.log(
+    "Pair balance usdc usdt",
+    await usdc.balanceOf(pair.address),
+    await usdt.balanceOf(pair.address)
+  )
+
   console.log("Withdraw...")
   ////удаляем ликвидность и забираем токены
   await lr.withdraw(
     (await lr.userBalance(signer.address)).toString(),
-    "99500000000000000000000",
-    "1456215092"
+    "0",
+    "0"
   ).then( async (tx) => {
+      console.log(await pair.allowance(lr.address, routerAddress))
       // console.log(tx)
       // console.log((await tx.wait()).events)
       await tx.wait()
