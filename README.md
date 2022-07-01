@@ -1,16 +1,7 @@
-# Basic Sample Hardhat Project
+# Sushi Swap Call
+This project (router) allows you to add liquidity to any decentralized exchange like Uniswap or Sushiswap and report the amount of added and removed liquidity through the router. The listening script allows you to see the amount of added/removed liquidity in US dollars.
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+Listener works through Alchemy.
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
-```
-# SushiSwapCall
+Liquidity Router address on Polygon - 0xcC74FD1D507fd1D718CFA5935EDb826Ce0A65338
+USDC/USDT pair is used.

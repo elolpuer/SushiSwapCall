@@ -41,5 +41,8 @@ module.exports = {
     //   gasPrice: 8
     // }
   },
+  etherscan: {
+    apiKey: process.env.SCAN_API_KEY,
+  },
   solidity: "0.8.13",
 };
